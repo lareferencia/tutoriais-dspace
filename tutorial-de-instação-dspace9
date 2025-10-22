@@ -1,0 +1,167 @@
+# Instalando o DSpace 9 do zero
+Este tutorial fornece um guia passo a passo para instalar o DSpace 9 do zero de forma simplificada.
+### 1. Configurando o ambiente
+- JDK 17
+- Maven 3.8+
+- Ant 1.10+
+- PostgreSQL 12+
+- [Solr 9.x](https://solr.apache.org/guide/solr/latest/deployment-guide/installing-solr.html)
+- Node.js 22+
+- PM2 (para o gerenciamento do frontend Angular em produção)
+
+
+
+### 2. Configurando o banco de dados
+Após instalar o PostgreSQL, crie o banco de dados e usuário para o DSpace.
+
+ #### 2.1 Acesse o PostgreSQL como administrador:
+
+    sudo -u postgres psql
+
+
+#### 2.2 Crie um usuário (substitua 'dspace#pass' por uma senha forte):
+
+    CREATE USER dspace WITH PASSWORD 'dspace#pass';
+
+#### 2.3 Crie o banco de dados DSpace e atribua a propriedade:
+
+    CREATE DATABASE dspace OWNER dspace;
+
+#### 2.4 Conceda todos os privilégios ao usuário:
+
+    GRANT ALL PRIVILEGES ON DATABASE dspace TO dspace;
+
+#### 2.5 Ative a extensão do `pgcrypto`:
+
+    CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+#### 2.6 Saia do prompt do PostgreSQL:
+
+    \q
+
+
+### 3. Instalar o backend do DSpace (REST API)
+Baixe a última versão do **backend do DSpace** do [site oficial](https://dspace.org/download/) e descompacte-o. Iremos chamar a pasta extraída de [DSpace Source].
+
+#### 3.1 Crie o diretório de instalação (vamos utilizar /dspace):
+
+    cd /
+    mkdir dspace
+    chown [usuario-em-execucao] dspace
+
+Nessa parte vamos usar as seguintes nomenclaturas:
+> `[dspace]` → Diretório de instalação para o DSpace (`/dspace`)
+> `[DSpace Source]` → Pasta contendo o código fonte do DSpace
+
+#### 3.2 Copie e edite o arquivo de configuração
+
+    cp [DSpace Source]/dspace/config/local.cfg.EXAMPLE [DSpace Source]/dspace/config/local.cfg
+
+Configurações mínimas:
+
+    dspace.dir=/dspace
+    dspace.server.url=http://[host]/server
+    dspace.ui.url=https://[host]
+    solr.server=http://localhost:8983/solr
+    db.url=jdbc:postgresql://localhost:5432/dspace
+    db.username=dspace
+    db.password=<DB Password>
+
+Explicação
+
+ - `dspace.dir`: Diretório de instalação do DSpace
+ - `dspace.server.url`: URL pública do backend (REST API)
+ - `dspace.ui.url`: URL pública do frontend Angular
+ - `solr.server`: URL do servidor do Solr
+ - `db.url`: URL de conexão do banco de dados
+ - `db.username` / `db.password`: Credenciais do banco de dados
+
+#### 3.3 Faça a build do backend:
+
+    mvn package
+
+#### 3.4 Instale-o utilizando o Ant:
+
+    cd [DSpace Source]/dspace/target/dspace-installer
+    ant fresh_install
+
+#### 3.5 Atualize o esquema do banco de dados:
+
+    [dspace]/bin/dspace database migrate
+
+#### 3.6 Configure o Solr:
+
+    cp -R [dspace]/solr/* [solr]/server/solr/configsets
+
+#### 3.7 Reinicie o Solr:
+
+    [solr]/bin/solr stop
+    [solr]/bin/solr start -Dsolr.config.lib.enabled=true
+
+#### 3.8 Inicie o backend do DSpace:
+
+    java -jar /dspace/webapps/server-boot.jar
+
+Acesse a API em: http://[host]:8080/server
+
+**Recomendação (produção):** Configure o `server.boot.jar` como serviço Linux (via `systemd` ou outro serviço de gerenciamento), e então ele vai executar   automaticamente e reiniciar caso falhe.
+
+##
+
+
+### 4. Instalando o Frontend Angular
+Faça o download da última versão da **UI do DSpace** do [site oficial](https://dspace.org/download/) e descompacte-a.
+
+#### 4.1 Instale as dependências:
+
+    npm install
+
+#### 4.2 Copie e configure o arquivo de configuração para produção:
+
+    cp config/config.example.yml config/config.prod.yml
+
+Configuração de exemplo:
+
+    ui:
+	    ssl: false
+	    host: [host-front]
+	    port: 4000
+	    nameSpace: /
+	rest:
+		ssl: false
+		host: [host-server]
+		port: 8080
+		nameSpace: /server
+		ssrBaseUrl: http://localhost:8080/server
+
+Isso conecta o frontend Angular à API REST do DSpace.
+
+#### 4.3 Inicie a UI manualmente:
+
+    npm start
+
+#### 4.4 Para executar o Angular com PM2 (recomendado para produção), crie um arquivo `dspace-ui.json`:
+
+    {
+	    "apps": [
+		   {
+			   "name": "dspace-ui",
+			   "cwd" : "/full/path/[dspace-angular]",
+			   "script": "dist/server/main.js",
+			   "env": {
+				   "NODE_ENV": "production"
+				   }
+			}
+		]
+	}
+
+Inicie com:
+
+    pm2 start dspace-ui.json
+
+##
+
+### 5. Crie um Usuário Administrador
+
+    [dspace]/bin/dspace create-administrator
+
