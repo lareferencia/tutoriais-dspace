@@ -1,5 +1,5 @@
 
-#dspace #tutorial  
+# Tutorial - Adicionando novos filtros à busca do DSpace.md
 
 O DSpace permite estender e personalizar sua busca (Discovery) adicionando novos filtros. Esses filtros podem ser exibidos na barra lateral de busca, na página de filtros e até mesmo no menu **Navegar (Browse)** da barra de navegação.  
 Este tutorial mostra, passo a passo, como configurar um novo filtro.  
