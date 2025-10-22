@@ -6,7 +6,8 @@ Repositório mantido pelo **Ibict (Instituto Brasileiro de Informação em Ciên
 
 - [Instalação do DSpace 9](tutorial-de-instalacao-dspace9.md)  
 - [Migração do DSpace 5/6 para o DSpace 8 ou 9](tutorial-migracao-dspace.md)  
-- [Adicionando novos filtros à busca do DSpace](tutorial-add-novos-filtros-a-busca-dspace.md)  
+- [Adicionando novos filtros à busca do DSpace](tutorial-add-novos-filtros-a-busca-dspace.md)
+- [Tutorial de ativação do ambiente OAI-PMH DSpace 9](tutorial-ativacao-oai-pmh.md) 
 
 ## 🛠️ Sobre o repositório
 
