@@ -1,8 +1,3 @@
----
-share_link: https://share.note.sx/ys4agtk9#cGkkfLPnLtKnZg6XGeGW+pIo3FdcVCe4MLro2F9Ajvc
-share_updated: 2025-08-15T12:55:38-03:00
----
-## Introdução
 
 Este tutorial descreve, de forma detalhada e ordenada, o passo a passo do processo de migração de uma instalação antiga do DSpace (versões 5 ou 6) para as versões mais recentes (8 ou 9). O objetivo é garantir que todos os dados, configurações e estatísticas sejam preservados, além de orientar na preparação do ambiente e na instalação do backend (Java) e frontend (Angular).
 
