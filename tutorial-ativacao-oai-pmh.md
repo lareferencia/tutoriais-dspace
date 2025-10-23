@@ -24,7 +24,7 @@ Você pode testar se está funcionando acessando a url:
     [dspace.server.url]/[oai.path]/request?verb=Identify
 
  Exemplo: `http://localhost:8080/server/oai/request?verb=Identify`
- A resposta deve ser semelhante à do DSpace  Demo Server: [DSpace Demo OAI](https://demo.dspace.org/server/oai/request?verb=Identify)
+ A resposta deve ser semelhante à do DSpace  Demo Server: https://demo.dspace.org/server/oai/request?verb=Identify
 
 ## 2. Manutenção do Servidor OAI-PMH
 Após ativar o servidor, é necessário garantir que o **índice seja atualizado regularmente**. Atualmente, isso **não ocorre automaticamente** no DSpace. Para isso, utilize os comandos:
