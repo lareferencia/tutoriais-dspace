@@ -1,6 +1,6 @@
 # Tutoriais do DSpace
 
-Repositório mantido pelo **Ibict (Instituto Brasileiro de Informação em Ciência e Tecnologia)** e pela **LA Referencia**, contendo tutoriais e guias técnicos sobre **instalação**, **migração** e **configuração** do DSpace.
+Repositório mantido pela **LA Referencia** e pelo **Ibict (Instituto Brasileiro de Informação em Ciência e Tecnologia)**, contendo tutoriais e guias técnicos sobre **instalação**, **migração** e **configuração** do DSpace.
 
 ## 📘 Conteúdo
 
