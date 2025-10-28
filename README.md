@@ -4,10 +4,10 @@ Repositorio mantenido por **LA Referencia** y el **Ibict (Instituto Brasileño d
 
 ## 📘 Contenido
 
-- [Instalación de DSpace 9](es-tutorial-de-instalacion-dspace9.md)  
-- [Migración de DSpace 5/6 a DSpace 8 o 9](es-tutorial-migracion-dspace.md)  
-- [Agregar nuevos filtros a la búsqueda de DSpace](es-tutorial-agregar-nuevos-filtros-busqueda-dspace.md)  
-- [Tutorial de activación del entorno OAI-PMH en DSpace 9](es-tutorial-activacion-oai-pmh.md)  
+- [Instalación de DSpace 9](instalacion-dspace9-es.md)  
+- [Migración de DSpace 5/6 a DSpace 8 o 9](migracion-dspace-es.md)  
+- [Agregar nuevos filtros a la búsqueda de DSpace](agregar-nuevos-filtros-busqueda-dspace-es.md)  
+- [Tutorial de activación del entorno OAI-PMH en DSpace 9](activacion-oai-pmh-es.md)  
 
 ## 🛠️ Sobre el repositorio
 
@@ -38,10 +38,10 @@ Repositório mantido pela **LA Referencia** e pelo **Ibict (Instituto Brasileiro
 
 ## 📘 Conteúdo
 
-- [Instalação do DSpace 9](pt-tutorial-de-instalacao-dspace9.md)  
-- [Migração do DSpace 5/6 para o DSpace 8 ou 9](pt-tutorial-migracao-dspace.md)  
-- [Adicionando novos filtros à busca do DSpace](pt-tutorial-add-novos-filtros-a-busca-dspace.md)
-- [Tutorial de ativação do ambiente OAI-PMH DSpace 9](pt-tutorial-ativacao-oai-pmh.md) 
+- [Instalação do DSpace 9](instalacao-dspace9-pt.md)  
+- [Migração do DSpace 5/6 para o DSpace 8 ou 9](migracao-dspace-pt.md)  
+- [Adicionando novos filtros à busca do DSpace](add-novos-filtros-a-busca-dspace-pt.md)
+- [Tutorial de ativação do ambiente OAI-PMH DSpace 9](ativacao-oai-pmh-pt.md) 
 
 ## 🛠️ Sobre o repositório
 
