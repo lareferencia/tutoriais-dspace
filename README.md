@@ -1,14 +1,47 @@
+# Tutoriales de DSpace
+
+Repositorio mantenido por **LA Referencia** y el **Ibict (Instituto Brasileño de Información en Ciencia y Tecnología)**, que contiene tutoriales y guías técnicas sobre la **instalación**, **migración** y **configuración** de DSpace.
+
+## 📘 Contenido
+
+- [Instalación de DSpace 9](instalacion-dspace9-es.md)  
+- [Migración de DSpace 5/6 a DSpace 8 o 9](migracion-dspace-es.md)  
+- [Agregar nuevos filtros a la búsqueda de DSpace](agregar-nuevos-filtros-busqueda-dspace-es.md)  
+- [Tutorial de activación del entorno OAI-PMH en DSpace 9](activacion-oai-pmh-es.md)  
+
+## 🛠️ Sobre el repositorio
+
+Este repositorio tiene como objetivo apoyar a los **administradores de repositorios institucionales** y a los **desarrolladores** que utilizan DSpace, ofreciendo materiales actualizados, probados y adaptados a la realidad de los entornos de implementación de **LA Referencia** y del **Ibict**.
+
+## 🤝 Contribuciones
+
+¡Las contribuciones son bienvenidas!  
+Para contribuir:
+
+1. Haz un fork de este repositorio.  
+2. Crea una nueva rama para tu modificación (`git checkout -b mi-contribucion`).  
+3. Realiza los cambios deseados y agrega commits claros y descriptivos.  
+4. Envía un pull request explicando el propósito de tu contribución.  
+
+Siéntete libre de sugerir mejoras, correcciones y nuevos tutoriales.
+
+## 🧾 Licencia
+
+Este proyecto está licenciado bajo los términos de la **[Licencia Pública General GNU v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl-3.0.html)**.
+
+---
+## 🇧🇷 Português
+
 # Tutoriais do DSpace
 
-Repositório mantido pelo **Ibict (Instituto Brasileiro de Informação em Ciência e Tecnologia)** e pela **LA Referencia**, contendo tutoriais e guias técnicos sobre **instalação**, **migração** e **configuração** do DSpace.
+Repositório mantido pela **LA Referencia** e pelo **Ibict (Instituto Brasileiro de Informação em Ciência e Tecnologia)**, contendo tutoriais e guias técnicos sobre **instalação**, **migração** e **configuração** do DSpace.
 
 ## 📘 Conteúdo
 
-- [Instalação do DSpace 9](tutorial-de-instalacao-dspace9.md)  
-- [Migração do DSpace 5/6 para o DSpace 8 ou 9](tutorial-migracao-dspace.md)  
-- [Adicionando novos filtros à busca do DSpace](tutorial-add-novos-filtros-a-busca-dspace.md)
-- [Tutorial de ativação do ambiente OAI-PMH DSpace 9](tutorial-ativacao-oai-pmh.md) 
-- [Tutorial para adicionar botão de citacao](tutorial-botao-de-citacao.md) 
+- [Instalação do DSpace 9](instalacao-dspace9-pt.md)  
+- [Migração do DSpace 5/6 para o DSpace 8 ou 9](migracao-dspace-pt.md)  
+- [Adicionando novos filtros à busca do DSpace](add-novos-filtros-a-busca-dspace-pt.md)
+- [Tutorial de ativação do ambiente OAI-PMH DSpace 9](ativacao-oai-pmh-pt.md) 
 
 ## 🛠️ Sobre o repositório
 
