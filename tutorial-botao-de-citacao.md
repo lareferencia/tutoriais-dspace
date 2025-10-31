@@ -55,8 +55,9 @@ cd <dspace-angular-source>
 git apply -v <(curl -sL "https://patch-diff.githubusercontent.com/raw/DSpace/dspace-angular/pull/4779.patch")
 git add . && git commit -m "Adiciona botão de citação bibliográfica"
 ```
+**Passo 2:** Se você estiver usando um tema customizado e tiver sobrecrito os componentes `app/item-page/simple/item-types/untyped-item/untyped-item.component.ts` e/ou o arquivo `app/item-page/simple/item-types/publication/publication.component.ts` é necessário adicionar o componente `BibliographyComponent` nos imports  dos arquivos .ts: `src/themes/<seu-tema>/app/item-page/simple/item-types/untyped-item/untyped-item.component.ts` e/ou `src/themes/<seu-tema>/app/item-page/simple/item-types/publication/publication.component.ts` e adicionar o elemento ` <ds-item-bibliography [item]="object" class="my-2"></ds-item-bibliography>` nos arquivos .html: `src/themes/<seu-tema>/app/item-page/simple/item-types/untyped-item/untyped-item.component.html` e/ou `src/themes/<seu-tema>/app/item-page/simple/item-types/publication/publication.component.html`. Ele deve ser inserido como último elemento dentro da ` <div class="col-xs-12 col-md-4">`, na dúvida sobre a posição correta olhe nos arquivos padrões para ver a posição correta.
 
-**Passo 2:** Após aplicar o patch, atualize e reinicie o frontend e verifique se está funcionando normalmente:
+**Passo 3:** Após aplicar o patch, atualize e reinicie o frontend e verifique se está funcionando normalmente:
 
 ```bash
 cd <dspace-angular-source>
