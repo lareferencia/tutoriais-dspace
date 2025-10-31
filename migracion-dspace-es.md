@@ -192,9 +192,14 @@ cp -R [dspace]/solr/* [solr]/server/solr/configsets
 
 ### 5.5 Importe las estadísticas de Solr
 
+Para importar as estatísticas exportadas do Solr para a nova instalação do DSpace, execute os seguintes comandos:
+
 ```
-# (Comandos específicos para importar estadísticas según la versión DSpace)
+[dspace]/bin/dspace solr-import-statistics -i authority -d [/path/solr-export]
+[dspace]/bin/dspace solr-import-statistics -i statistics -d [/path/solr-export]
 ```
+O parâmetro -d é opcional e serve para indicar o caminho onde estão localizados os arquivos CSV exportados.
+Se não for informado, o diretório padrão utilizado será [dspace]/solr-export.
 
 ### 5.6 Reindexe todo el contenido
 
