@@ -7,7 +7,8 @@ Repositorio mantenido por **LA Referencia** y el **Ibict (Instituto Brasileño d
 - [Instalación de DSpace 9](instalacion-dspace9-es.md)  
 - [Migración de DSpace 5/6 a DSpace 8 o 9](migracion-dspace-es.md)  
 - [Agregar nuevos filtros a la búsqueda de DSpace](agregar-nuevos-filtros-busqueda-dspace-es.md)  
-- [Tutorial de activación del entorno OAI-PMH en DSpace 9](activacion-oai-pmh-es.md)  
+- [Tutorial de activación del entorno OAI-PMH en DSpace 9](activacion-oai-pmh-es.md)
+- [Agregar boton de citacion](agregar-boton-de-citacion-es.md)
 
 ## 🛠️ Sobre el repositorio
 
@@ -41,7 +42,8 @@ Repositório mantido pela **LA Referencia** e pelo **Ibict (Instituto Brasileiro
 - [Instalação do DSpace 9](instalacao-dspace9-pt.md)  
 - [Migração do DSpace 5/6 para o DSpace 8 ou 9](migracao-dspace-pt.md)  
 - [Adicionando novos filtros à busca do DSpace](add-novos-filtros-a-busca-dspace-pt.md)
-- [Tutorial de ativação do ambiente OAI-PMH DSpace 9](ativacao-oai-pmh-pt.md) 
+- [Tutorial de ativação do ambiente OAI-PMH DSpace 9](ativacao-oai-pmh-pt.md)
+- [Add Botao de citação](add-botao-de-citacao-pt.md)
 
 ## 🛠️ Sobre o repositório
 
