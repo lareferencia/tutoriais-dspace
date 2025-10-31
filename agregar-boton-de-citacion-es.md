@@ -3,20 +3,21 @@
 Este tutorial agrega al DSpace un botón para generar citas
 bibliográficas automáticamente en las páginas de ítems y publicaciones:
 
-::: {align="center"}
-    <img alt="boton-de-citacion" src="https://github.com/user-attachments/assets/cca580ac-4d1d-40b9-a414-b3d99c0cbc4a" />
-:::
+<div align="center">
+    <img alt="botao-de-citacao" src="https://github.com/user-attachments/assets/cca580ac-4d1d-40b9-a414-b3d99c0cbc4a" />
+</div>
 
-::: {align="center"}
-    <img alt="boton-de-citacion-en-la-pagina" src="https://github.com/user-attachments/assets/11bced87-8c39-4672-9501-75ab978deda4" />
-:::
+<div align="center">
+    <img alt="botao-de-citacao-na-pagina" src="https://github.com/user-attachments/assets/11bced87-8c39-4672-9501-75ab978deda4" />
+</div>
 
 ## Aplicar el parche en el backend
 
 **Paso 1:** Entra en el directorio del código fuente de DSpace (backend)
 y ejecuta:
 
-> \[!WARNING\] Si ocurren conflictos durante la aplicación del parche,
+> [!WARNING]
+> Si ocurren conflictos durante la aplicación del parche,
 > es responsabilidad de quien lo aplica resolverlos manualmente.
 
 ``` bash
@@ -30,7 +31,8 @@ git apply -v <(curl -sL "https://patch-diff.githubusercontent.com/raw/DSpace/DSp
 git add . && git commit -m "Agrega endpoint de bibliografía"
 ```
 
-> \[!IMPORTANT\] Si hay conflicto, después de resolverlo, vuelve al paso
+> [!IMPORTANT]
+> Si hay conflicto, después de resolverlo, vuelve al paso
 > 1.
 
 **Paso 3:** Después de aplicar el parche, actualiza la instalación y
@@ -48,7 +50,8 @@ ant update
 **Paso 1:** Entra en el directorio del código fuente de DSpace Angular
 (frontend) y ejecuta:
 
-> \[!WARNING\] De la misma manera, si ocurren conflictos durante la
+> [!WARNING]
+> De la misma manera, si ocurren conflictos durante la
 > aplicación del parche, deben resolverse manualmente.
 
 ``` bash
@@ -85,5 +88,6 @@ cd <dspace-angular-source>
 npm run start
 ```
 
-> \[!IMPORTANT\] Si hay conflicto, después de resolverlo, vuelve al paso
+> [!IMPORTANT]
+> Si hay conflicto, después de resolverlo, vuelve al paso
 > 1.
