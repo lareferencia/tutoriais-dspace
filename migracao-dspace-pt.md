@@ -196,7 +196,8 @@ Reinicie o serviço do Solr para aplicar as configurações e garantir que os da
 Para importar as estatísticas exportadas do Solr para a nova instalação do DSpace, execute os seguintes comandos:
 
 ```
-
+[dspace]/bin/dspace solr-import-statistics -i authority -d [/path/solr-export]
+[dspace]/bin/dspace solr-import-statistics -i statistics -d [/path/solr-export]
 ```
 
 O parâmetro `-d` é opcional e serve para indicar o caminho onde estão localizados os arquivos CSV exportados.  
