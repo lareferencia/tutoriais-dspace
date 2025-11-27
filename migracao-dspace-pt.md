@@ -36,7 +36,8 @@ pg_dump -U [db_username] -h [host] -p 5432 [db_name] > dump.sql
 Para garantir que as estatísticas do SOLR sejam preservadas e possam ser utilizadas na nova instalação, é necessário exportá-las do sistema antigo. Estes dados incluem informações importantes de autoridade (`authority`) e estatísticas de uso (`statistics`), que ajudam na manutenção e análise da base.
 Para isso, execute os seguintes comandos no diretório de instalação do DSpace antigo:
 ```
-[dspace-antigo]/bin/dspace solr-export-statistics -i authority[dspace-antigo]/bin/dspace solr-export-statistics -i statistics
+[dspace-antigo]/bin/dspace solr-export-statistics -i authority
+[dspace-antigo]/bin/dspace solr-export-statistics -i statistics
 ```
 A execução desses comandos acima irá gerar, dentro do diretório `[dspace-antigo]`, uma pasta chamada `solr-export` contendo os arquivos CSV exportados com as estatísticas do Solr.
 ### 2.3 Faça uma cópia do diretório `assetstore`
