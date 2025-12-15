@@ -112,7 +112,6 @@ lattes
 
 ```
 
-> ℹ️ Si se deja en blanco, el metadato será solamente `dc.element`.
 
 ----------
 
