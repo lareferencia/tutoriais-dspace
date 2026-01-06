@@ -50,6 +50,8 @@ Ejecute los siguientes comandos en el directorio de instalación del DSpace anti
 
 La ejecución de estos comandos generará, dentro del directorio `[dspace-antiguo]`, una carpeta llamada `solr-export` que contiene los archivos CSV exportados con las estadísticas de Solr.
 
+**DSpace 4** no incluye un script de exportación para Solr; por lo tanto, es necesario realizar la exportación manualmente o mediante un script. Recomendamos seguir este [tutorial](dspace4-solr-export-statistics-es.md) para llevar a cabo la exportación.
+
 ### 2.3 Haga una copia del directorio `assetstore`
 
 El directorio **assetstore** se encuentra en la instalación del DSpace y contiene todos los archivos almacenados en el sistema, incluidos subdirectorios y sus contenidos. Para garantizar que ningún dato se pierda durante la migración, es fundamental copiar todo el contenido de esta carpeta. Puede optar por comprimirla (zip) para facilitar la transferencia o copiar directamente el directorio completo a un lugar seguro.

@@ -10,6 +10,7 @@ Repositorio mantenido por **LA Referencia** y el **Ibict (Instituto Brasileño d
 - [Tutorial de activación del entorno OAI-PMH en DSpace 9](activacion-oai-pmh-es.md)
 - [Agregar boton de citacion](agregar-boton-de-citacion-es.md)
 - [Agregar metadatos en DSpace](add-metadado-dspace-es.md)
+- [Exportación de estadísticas desde Solr](dspace4-solr-export-statistics-es.md)
 
 ## 🛠️ Sobre el repositorio
 
@@ -46,6 +47,7 @@ Repositório mantido pela **LA Referencia** e pelo **Ibict (Instituto Brasileiro
 - [Tutorial de ativação do ambiente OAI-PMH DSpace 9](ativacao-oai-pmh-pt.md)
 - [Add Botao de citação](add-botao-de-citacao-pt.md)
 - [Add Metadados no DSpace](add-metadado-dspace-pt.md)
+- [Exportação de estatísticas do Solr](dspace4-solr-export-statistics-pt.md)
 
 ## 🛠️ Sobre o repositório
 

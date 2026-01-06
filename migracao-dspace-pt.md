@@ -40,6 +40,9 @@ Para isso, execute os seguintes comandos no diretório de instalação do DSpace
 [dspace-antigo]/bin/dspace solr-export-statistics -i statistics
 ```
 A execução desses comandos acima irá gerar, dentro do diretório `[dspace-antigo]`, uma pasta chamada `solr-export` contendo os arquivos CSV exportados com as estatísticas do Solr.
+
+O **DSpace 4** não possui um script de exportação para o Solr; portanto, é necessário realizar a exportação manualmente ou por meio de um script. Recomendamos seguir este [tutorial](dspace4-solr-export-statistics-pt.md) para realizar a exportação.
+
 ### 2.3 Faça uma cópia do diretório `assetstore`
 O diretório **assetstore** está localizado na instalação do DSpace e contém todos os arquivos armazenados no sistema, incluindo subdiretórios e seus conteúdos. Para garantir que nenhum dado seja perdido durante a migração, é fundamental copiar todo o conteúdo dessa pasta. Você pode optar por compactá-la (zip) para facilitar a transferência ou copiar diretamente o diretório completo para um local seguro.
 Exemplo de comando para copiar:
