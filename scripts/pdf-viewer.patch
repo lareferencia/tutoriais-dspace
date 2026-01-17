@@ -1,0 +1,720 @@
+diff --git a/config/config.example.yml b/config/config.example.yml
+index c3dc673b5..845565388 100644
+--- a/config/config.example.yml
++++ b/config/config.example.yml
+@@ -471,6 +471,7 @@ bundle:
+ mediaViewer:
+   image: false
+   video: false
++  pdf: false
+ 
+ # Whether the end user agreement is required before users use the repository.
+ # If enabled, the user will be required to accept the agreement before they can use the repository.
+diff --git a/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.html b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.html
+new file mode 100644
+index 000000000..6dc687f2f
+--- /dev/null
++++ b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.html
+@@ -0,0 +1,41 @@
++<div class="pdf-viewer-container">
++  
++  <div class="d-flex align-items-center mb-2">
++    <h2 class="simple-view-element-header mb-0 me-2">{{ 'media-viewer.pdf.files' | translate }}</h2>
++    
++    <span class="badge rounded-pill bg-secondary" style="font-size: 0.9rem;">
++      {{ pdfs?.length || 0 }}
++    </span>
++  </div>
++
++  <select id="pdfSelect" class="form-select d-inline-block" [(ngModel)]="currentIndex" [disabled]="pdfs?.length === 1 || isLoading" 
++    (change)="selectedMedia(currentIndex)">
++    @for (item of pdfs; track $index) {
++    <option [value]="$index">
++      {{ dsoNameService.getName(item.bitstream) }}
++    </option>
++    }
++  </select>
++
++  <div class="pdf-viewer border-bottom" style="position: relative; min-height: 200px;">
++    
++    @if (isLoading) {
++      <div class="loading-overlay d-flex justify-content-center align-items-center h-100 w-100">
++        <div class="spinner-border text-primary" role="status">
++          <span class="visually-hidden">Loading...</span>
++        </div>
++        <span class="ms-2">{{ 'media-viewer.loading' | translate }}...</span> 
++        </div>
++    } 
++    
++    @else {
++      <object #pdfViewer [data]="blobUrl" type="application/pdf" width="100%" height="100%">
++        <p>
++          <span>{{ 'media-viewer.pdf.browser-not-support' | translate }}</span>
++          <a [href]="pdfs[currentIndex].bitstream._links.content.href">{{ 'media-viewer.pdf.download' | translate }}</a>.
++        </p>
++      </object>
++    }
++
++  </div>
++</div>
+\ No newline at end of file
+diff --git a/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.scss b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.scss
+new file mode 100644
+index 000000000..121516400
+--- /dev/null
++++ b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.scss
+@@ -0,0 +1,24 @@
++.pdf-viewer-container {
++  margin-bottom: 2rem;
++}
++
++.simple-view-element-header {
++  font-size: 1.25rem;
++}
++
++.pdf-viewer {
++  height: 50vh;
++  padding-bottom: 1px;
++  min-height: 500px; 
++  display: flex;
++  flex-direction: column;
++}
++
++.loading-overlay {
++  flex-grow: 1; 
++  display: flex;
++  justify-content: center;
++  align-items: center;
++  background-color: #f8f9fa;
++  color: #6c757d;
++}
+\ No newline at end of file
+diff --git a/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.spec.ts b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.spec.ts
+new file mode 100644
+index 000000000..448f89b2d
+--- /dev/null
++++ b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.spec.ts
+@@ -0,0 +1,176 @@
++import {
++  provideHttpClient,
++  withInterceptorsFromDi,
++} from '@angular/common/http';
++import {
++  HttpTestingController,
++  provideHttpClientTesting,
++} from '@angular/common/http/testing';
++import {
++  ChangeDetectorRef,
++  NO_ERRORS_SCHEMA,
++} from '@angular/core';
++import {
++  ComponentFixture,
++  TestBed,
++  waitForAsync,
++} from '@angular/core/testing';
++import { FormsModule } from '@angular/forms';
++import {
++  By,
++  DomSanitizer,
++} from '@angular/platform-browser';
++import { DSONameService } from '@dspace/core/breadcrumbs/dso-name.service';
++import { Bitstream } from '@dspace/core/shared/bitstream.model';
++import { MediaViewerItem } from '@dspace/core/shared/media-viewer-item.model';
++import { MockBitstreamFormat1 } from '@dspace/core/testing/item.mock';
++import { TranslateLoaderMock } from '@dspace/core/testing/translate-loader.mock';
++import {
++  TranslateLoader,
++  TranslateModule,
++} from '@ngx-translate/core';
++import { of } from 'rxjs';
++
++import { MediaViewerPdfComponent } from './media-viewer-pdf.component';
++
++describe('MediaViewerPdfComponent', () => {
++  let component: MediaViewerPdfComponent;
++  let fixture: ComponentFixture<MediaViewerPdfComponent>;
++  let httpMock: HttpTestingController;
++  let sanitizer: DomSanitizer;
++
++  const mockBitstream: Bitstream = Object.assign(new Bitstream(), {
++    sizeBytes: 1024,
++    format: of(MockBitstreamFormat1),
++    _links: {
++      self: {
++        href: 'https://demo.dspace.org/api/core/bitstreams/123',
++      },
++      content: {
++        href: 'https://demo.dspace.org/api/core/bitstreams/123/content',
++      },
++    },
++    id: '123',
++    uuid: '123',
++    type: 'bitstream',
++    metadata: {
++      'dc.title': [
++        { language: null, value: 'test_pdf.pdf' },
++      ],
++    },
++  });
++
++  const mockMediaViewerItems: MediaViewerItem[] = [
++    { bitstream: mockBitstream, format: 'application', mimetype: 'application/pdf', thumbnail: null, accessToken: null },
++    { bitstream: mockBitstream, format: 'application', mimetype: 'application/pdf', thumbnail: null, accessToken: null },
++  ];
++
++  beforeEach(waitForAsync(() => {
++    TestBed.configureTestingModule({
++      imports: [
++        FormsModule,
++        TranslateModule.forRoot({
++          loader: { provide: TranslateLoader, useClass: TranslateLoaderMock },
++        }),
++        MediaViewerPdfComponent,
++      ],
++      providers: [
++        DSONameService,
++        ChangeDetectorRef,
++        provideHttpClient(withInterceptorsFromDi()),
++        provideHttpClientTesting(),
++      ],
++      schemas: [NO_ERRORS_SCHEMA],
++    }).compileComponents();
++  }));
++
++  beforeEach(() => {
++    fixture = TestBed.createComponent(MediaViewerPdfComponent);
++    component = fixture.componentInstance;
++    sanitizer = TestBed.inject(DomSanitizer);
++    httpMock = TestBed.inject(HttpTestingController);
++    component.pdfs = mockMediaViewerItems;
++    fixture.detectChanges();
++    const initReq = httpMock.expectOne('https://demo.dspace.org/api/core/bitstreams/123/content');
++    initReq.flush(new Blob(['initial content'], { type: 'application/pdf' }));
++  });
++
++  afterEach(() => {
++    httpMock.verify();
++  });
++
++  it('should create', () => {
++    expect(component).toBeTruthy();
++  });
++
++  describe('ngOnInit', () => {
++    it('should call loadPdf with index 0', () => {
++      spyOn<any>(component, 'loadPdf');
++      component.ngOnInit();
++      // Dot notation cannot be used because 'loadPdf' is a private method.
++      // Accessing the private method only for testing purposes.
++      // eslint-disable-next-line @typescript-eslint/dot-notation
++      expect(component['loadPdf']).toHaveBeenCalledWith(0);
++    });
++  });
++
++  describe('loadPdf', () => {
++    it('should load and set blobUrl on success', () => {
++      const mockBlob = new Blob(['PDF content'], { type: 'application/pdf' });
++      const bypassSpy = spyOn(sanitizer, 'bypassSecurityTrustResourceUrl').and.callThrough();
++
++      component.ngOnInit();
++      const req = httpMock.expectOne('https://demo.dspace.org/api/core/bitstreams/123/content');
++      expect(req.request.method).toBe('GET');
++      req.flush(mockBlob);
++
++      expect(component.isLoading).toBeFalse();
++      expect(bypassSpy).toHaveBeenCalled();
++      expect(component.blobUrl).toBeTruthy();
++    });
++
++    it('should handle errors gracefully', () => {
++      spyOn(console, 'error');
++      component.ngOnInit();
++      const req = httpMock.expectOne('https://demo.dspace.org/api/core/bitstreams/123/content');
++      req.error(new ProgressEvent('Network error'));
++
++      expect(component.isLoading).toBeFalse();
++      expect(console.error).toHaveBeenCalled();
++    });
++  });
++
++  describe('selectedMedia', () => {
++    it('should set currentIndex and load the selected pdf', () => {
++      const spyLoad = spyOn<any>(component, 'loadPdf');
++      component.selectedMedia(1);
++      expect(component.currentIndex).toBe(1);
++      expect(spyLoad).toHaveBeenCalledWith(1);
++    });
++  });
++
++  describe('UI template', () => {
++    it('should display the select element with the correct number of options', () => {
++      fixture.detectChanges();
++      const selectEl = fixture.debugElement.query(By.css('select'));
++      expect(selectEl).toBeTruthy();
++
++      const options = selectEl.nativeElement.querySelectorAll('option');
++      expect(options.length).toBe(2);
++    });
++
++    it('should show loading overlay when isLoading is true', () => {
++      component.isLoading = true;
++      fixture.detectChanges();
++      const loadingEl = fixture.debugElement.query(By.css('.loading-overlay'));
++      expect(loadingEl).toBeTruthy();
++    });
++
++    it('should show pdf object when not loading', () => {
++      component.isLoading = false;
++      fixture.detectChanges();
++      const objectEl = fixture.debugElement.query(By.css('object'));
++      expect(objectEl).toBeTruthy();
++    });
++  });
++});
+diff --git a/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.ts b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.ts
+new file mode 100644
+index 000000000..54c7ea2b9
+--- /dev/null
++++ b/src/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component.ts
+@@ -0,0 +1,68 @@
++import { HttpClient } from '@angular/common/http';
++import {
++  ChangeDetectorRef,
++  Component,
++  Input,
++  OnInit,
++  ViewChild,
++} from '@angular/core';
++import { FormsModule } from '@angular/forms';
++import {
++  DomSanitizer,
++  SafeResourceUrl,
++} from '@angular/platform-browser';
++import { TranslateModule } from '@ngx-translate/core';
++
++import { DSONameService } from '../../../core/breadcrumbs/dso-name.service';
++import { MediaViewerItem } from '../../../core/shared/media-viewer-item.model';
++
++@Component({
++  selector: 'ds-base-media-viewer-pdf',
++  templateUrl: './media-viewer-pdf.component.html',
++  styleUrls: ['./media-viewer-pdf.component.scss'],
++  imports: [
++    FormsModule,
++    TranslateModule,
++  ],
++})
++export class MediaViewerPdfComponent implements OnInit {
++  @Input() pdfs: MediaViewerItem[];
++  @ViewChild('pdfViewer') pdfViewer;
++
++  blobUrl: SafeResourceUrl = this.sanitizer.bypassSecurityTrustResourceUrl('');
++  currentIndex = 0;
++
++  isLoading = false;
++
++  constructor(private http: HttpClient, private sanitizer: DomSanitizer, public dsoNameService: DSONameService, private cdr: ChangeDetectorRef) { }
++
++  ngOnInit() {
++    this.loadPdf(this.currentIndex);
++  }
++
++  selectedMedia(index: number) {
++    this.currentIndex = index;
++    this.loadPdf(index);
++  }
++
++  private loadPdf(index: number) {
++    this.isLoading = true;
++
++    const url = this.pdfs[index].bitstream._links.content.href;
++
++    this.http.get(url, { responseType: 'blob' }).subscribe({
++      next: (blob) => {
++        const blobUrl = URL.createObjectURL(blob);
++        this.blobUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
++
++        this.isLoading = false;
++        this.cdr.detectChanges();
++      },
++      error: (err: unknown) => {
++        console.error('Error loading PDF:', err);
++        this.isLoading = false;
++        this.cdr.detectChanges();
++      },
++    });
++  }
++}
+diff --git a/src/app/item-page/media-viewer/media-viewer-pdf/themed-media-viewer-pdf.component.ts b/src/app/item-page/media-viewer/media-viewer-pdf/themed-media-viewer-pdf.component.ts
+new file mode 100644
+index 000000000..1abfe09f5
+--- /dev/null
++++ b/src/app/item-page/media-viewer/media-viewer-pdf/themed-media-viewer-pdf.component.ts
+@@ -0,0 +1,38 @@
++import {
++  Component,
++  Input,
++} from '@angular/core';
++
++import { MediaViewerItem } from '../../../core/shared/media-viewer-item.model';
++import { ThemedComponent } from '../../../shared/theme-support/themed.component';
++import { MediaViewerPdfComponent } from './media-viewer-pdf.component';
++
++/**
++ * Themed wrapper for {@link MediaViewerPdfComponent}.
++ */
++@Component({
++  selector: 'ds-media-viewer-pdf',
++  styleUrls: [],
++  templateUrl: '../../../shared/theme-support/themed.component.html',
++})
++export class ThemedMediaViewerPdfComponent extends ThemedComponent<MediaViewerPdfComponent> {
++
++  @Input() pdfs: MediaViewerItem[];
++
++  protected inAndOutputNames: (keyof MediaViewerPdfComponent & keyof this)[] = [
++    'pdfs',
++  ];
++
++  protected getComponentName(): string {
++    return 'MediaViewerPdfComponent';
++  }
++
++  protected importThemedComponent(themeName: string): Promise<any> {
++    return import(`../../../../themes/${themeName}/app/item-page/media-viewer/media-viewer-pdf/media-viewer-pdf.component`);
++  }
++
++  protected importUnthemedComponent(): Promise<any> {
++    return import('./media-viewer-pdf.component');
++  }
++
++}
+diff --git a/src/app/item-page/media-viewer/media-viewer.component.html b/src/app/item-page/media-viewer/media-viewer.component.html
+index 0629ded8c..265d9c553 100644
+--- a/src/app/item-page/media-viewer/media-viewer.component.html
++++ b/src/app/item-page/media-viewer/media-viewer.component.html
+@@ -1,42 +1,42 @@
+ <ng-container *ngVar="mediaList$ | async as mediaList">
+   @if (isLoading) {
+-    <ds-loading
+-      message="{{ 'loading.default' | translate }}"
+-      [showMessage]="false"
+-    ></ds-loading>
++  <ds-loading message="{{ 'loading.default' | translate }}" [showMessage]="false"></ds-loading>
+   }
+   @else {
+-    <div class="media-viewer">
+-      @if (mediaList.length > 0) {
+-        <ng-container *ngVar="mediaOptions.video && ['audio', 'video'].includes(mediaList[0]?.format) as showVideo">
+-          <ng-container *ngVar="mediaOptions.image && mediaList[0]?.format === 'image' as showImage">
+-            @if (showVideo) {
+-              <ds-media-viewer-video [medias]="mediaList" [captions]="captions$ | async"></ds-media-viewer-video>
+-            }
+-            @if (showImage) {
+-              <ds-media-viewer-image [images]="mediaList"></ds-media-viewer-image>
+-            }
+-            @if (showImage || showVideo) {
+-            } @else {
+-              @if (mediaOptions.image && mediaOptions.video) {
+-                <ds-media-viewer-image
+-                  [image]="(thumbnailsRD$ | async)?.payload?.page[0]?._links.content.href || thumbnailPlaceholder"
+-                  [preview]="false"
+-                ></ds-media-viewer-image>
+-              }
+-              @if (!(mediaOptions.image && mediaOptions.video)) {
+-                <ds-thumbnail
+-                  [thumbnail]="(thumbnailsRD$ | async)?.payload?.page[0]">
+-                </ds-thumbnail>
+-              }
+-            }
+-          </ng-container>
++  <div class="media-viewer">
++    @if (mediaList.length > 0) {
++    <ng-container *ngVar="mediaOptions.video && ['audio', 'video'].includes(mediaList[0]?.format) as showVideo">
++      <ng-container *ngVar="mediaOptions.image && mediaList[0]?.format === 'image' as showImage">
++        <ng-container *ngVar="mediaOptions.pdf && mediaList[0]?.mimetype === 'application/pdf' as showPdf">
++          @if (showPdf) {
++          <ds-media-viewer-pdf [pdfs]="filterPdf(mediaList)"></ds-media-viewer-pdf>
++          }
++
++          @if (showVideo) {
++          <ds-media-viewer-video [medias]="mediaList" [captions]="captions$ | async"></ds-media-viewer-video>
++          }
++          @if (showImage) {
++          <ds-media-viewer-image [images]="mediaList"></ds-media-viewer-image>
++          }
++          @if (showImage || showVideo || showPdf) {
++          } @else {
++          @if (mediaOptions.image && mediaOptions.video) {
++          <ds-media-viewer-image
++            [image]="(thumbnailsRD$ | async)?.payload?.page[0]?._links.content.href || thumbnailPlaceholder"
++            [preview]="false"></ds-media-viewer-image>
++          }
++          @if (!(mediaOptions.image && mediaOptions.video)) {
++          <ds-thumbnail [thumbnail]="(thumbnailsRD$ | async)?.payload?.page[0]">
++          </ds-thumbnail>
++          }
++          }
+         </ng-container>
+-      } @else {
+-        <ds-thumbnail
+-          [thumbnail]="(thumbnailsRD$ | async)?.payload?.page[0]">
+-        </ds-thumbnail>
+-      }
+-    </div>
++      </ng-container>
++    </ng-container>
++    } @else {
++    <ds-thumbnail [thumbnail]="(thumbnailsRD$ | async)?.payload?.page[0]">
++    </ds-thumbnail>
++    }
++  </div>
+   }
+-</ng-container>
++</ng-container>
+\ No newline at end of file
+diff --git a/src/app/item-page/media-viewer/media-viewer.component.spec.ts b/src/app/item-page/media-viewer/media-viewer.component.spec.ts
+index c003429c5..992151c55 100644
+--- a/src/app/item-page/media-viewer/media-viewer.component.spec.ts
++++ b/src/app/item-page/media-viewer/media-viewer.component.spec.ts
+@@ -132,6 +132,7 @@ describe('MediaViewerComponent', () => {
+       comp.mediaOptions = {
+         image: true,
+         video: true,
++        pdf: true,
+       };
+       comp.isLoading = true;
+       fixture.detectChanges();
+@@ -159,6 +160,7 @@ describe('MediaViewerComponent', () => {
+       comp.mediaOptions = {
+         image: true,
+         video: true,
++        pdf: true,
+       };
+       comp.isLoading = false;
+       fixture.detectChanges();
+diff --git a/src/app/item-page/media-viewer/media-viewer.component.ts b/src/app/item-page/media-viewer/media-viewer.component.ts
+index 11b1e6793..a22fe5129 100644
+--- a/src/app/item-page/media-viewer/media-viewer.component.ts
++++ b/src/app/item-page/media-viewer/media-viewer.component.ts
+@@ -35,6 +35,7 @@ import { ThemedLoadingComponent } from '../../shared/loading/themed-loading.comp
+ import { VarDirective } from '../../shared/utils/var.directive';
+ import { ThemedThumbnailComponent } from '../../thumbnail/themed-thumbnail.component';
+ import { ThemedMediaViewerImageComponent } from './media-viewer-image/themed-media-viewer-image.component';
++import { ThemedMediaViewerPdfComponent } from './media-viewer-pdf/themed-media-viewer-pdf.component';
+ import { ThemedMediaViewerVideoComponent } from './media-viewer-video/themed-media-viewer-video.component';
+ 
+ /**
+@@ -48,6 +49,7 @@ import { ThemedMediaViewerVideoComponent } from './media-viewer-video/themed-med
+     AsyncPipe,
+     ThemedLoadingComponent,
+     ThemedMediaViewerImageComponent,
++    ThemedMediaViewerPdfComponent,
+     ThemedMediaViewerVideoComponent,
+     ThemedThumbnailComponent,
+     TranslateModule,
+@@ -88,10 +90,12 @@ export class MediaViewerComponent implements OnDestroy, OnInit {
+    * This method loads all the Bitstreams and Thumbnails and converts it to {@link MediaViewerItem}s
+    */
+   ngOnInit(): void {
++    console.log('MediaViewerComponent init', this.mediaList$);
+     this.itemRequest = this.route.snapshot.data.itemRequest;
+     const types: string[] = [
+       ...(this.mediaOptions.image ? ['image'] : []),
+       ...(this.mediaOptions.video ? ['audio', 'video'] : []),
++      ...(this.mediaOptions.pdf ? ['application/pdf'] : []),
+     ];
+     this.thumbnailsRD$ = this.loadRemoteData('THUMBNAIL');
+     this.subs.push(this.loadRemoteData('ORIGINAL').subscribe((bitstreamsRD: RemoteData<PaginatedList<Bitstream>>) => {
+@@ -113,7 +117,7 @@ export class MediaViewerComponent implements OnDestroy, OnInit {
+                   format,
+                   thumbnailsRD.payload && thumbnailsRD.payload.page[index],
+                 );
+-                if (types.includes(mediaItem.format)) {
++                if (types.includes(mediaItem.mimetype)) {
+                   this.mediaList$.next([...this.mediaList$.getValue(), mediaItem]);
+                 } else if (format.mimetype === 'text/vtt') {
+                   this.captions$.next([...this.captions$.getValue(), bitstreamsRD.payload.page[index]]);
+@@ -180,4 +184,9 @@ export class MediaViewerComponent implements OnDestroy, OnInit {
+     return null;
+   }
+ 
++  filterPdf(mediaList: MediaViewerItem[]) {
++    const pdfs = mediaList.filter(item => item.mimetype === 'application/pdf');
++    return pdfs;
++  }
++
+ }
+diff --git a/src/app/item-page/simple/item-types/publication/publication.component.html b/src/app/item-page/simple/item-types/publication/publication.component.html
+index a294cc025..83989b4a8 100644
+--- a/src/app/item-page/simple/item-types/publication/publication.component.html
++++ b/src/app/item-page/simple/item-types/publication/publication.component.html
+@@ -24,11 +24,6 @@
+         <ds-thumbnail [thumbnail]="object?.thumbnail | async"></ds-thumbnail>
+       </ds-metadata-field-wrapper>
+     }
+-    @if (mediaViewer.image || mediaViewer.video) {
+-      <div class="mb-2">
+-        <ds-media-viewer [item]="object"></ds-media-viewer>
+-      </div>
+-    }
+     <ds-item-page-file-section [item]="object"></ds-item-page-file-section>
+     <ds-item-page-date-field [item]="object"></ds-item-page-date-field>
+     <ds-metadata-representation-list class="ds-item-page-mixed-author-field"
+@@ -106,6 +101,11 @@
+       [fields]="['datacite.relation.isReferencedBy']"
+       [label]="'item.page.referenced'">
+     </ds-item-page-uri-field>
++    @if (mediaViewer.image || mediaViewer.video || mediaViewer.pdf) {
++      <div class="mb-2">
++        <ds-media-viewer [item]="object"></ds-media-viewer>
++      </div>
++    }
+     @if (geospatialItemPageFieldsEnabled) {
+       <ds-geospatial-item-page-field [item]="object"
+                                      [label]="'item.page.places'"
+diff --git a/src/app/item-page/simple/item-types/untyped-item/untyped-item.component.html b/src/app/item-page/simple/item-types/untyped-item/untyped-item.component.html
+index 52ae5556d..596ed7cb8 100644
+--- a/src/app/item-page/simple/item-types/untyped-item/untyped-item.component.html
++++ b/src/app/item-page/simple/item-types/untyped-item/untyped-item.component.html
+@@ -25,11 +25,6 @@
+         <ds-thumbnail [thumbnail]="object?.thumbnail | async"></ds-thumbnail>
+       </ds-metadata-field-wrapper>
+     }
+-    @if (mediaViewer.image || mediaViewer.video) {
+-      <div class="mb-2">
+-        <ds-media-viewer [item]="object"></ds-media-viewer>
+-      </div>
+-    }
+     <ds-item-page-file-section [item]="object"></ds-item-page-file-section>
+     <ds-item-page-date-field [item]="object"></ds-item-page-date-field>
+     <ds-metadata-representation-list class="ds-item-page-mixed-author-field"
+@@ -71,6 +66,11 @@
+       [fields]="['dc.identifier.citation']"
+       [label]="'item.page.citation'">
+     </ds-generic-item-page-field>
++    @if (mediaViewer.image || mediaViewer.video || mediaViewer.pdf) {
++      <div class="mb-2">
++        <ds-media-viewer [item]="object"></ds-media-viewer>
++      </div>
++    }
+     @if (geospatialItemPageFieldsEnabled) {
+       <ds-geospatial-item-page-field [item]="object"
+                                      [label]="'item.page.places'"
+diff --git a/src/assets/i18n/en.json5 b/src/assets/i18n/en.json5
+index c0b620d24..74cba74b8 100644
+--- a/src/assets/i18n/en.json5
++++ b/src/assets/i18n/en.json5
+@@ -7213,4 +7213,12 @@
+   "item.preview.organization.address.addressLocality": "City",
+ 
+   "item.preview.organization.alternateName": "Alternative name",
++
++  "media-viewer.pdf.files": "Files",
++
++  "media-viewer.pdf.browser-not-support": "Your browser does not support the PDF viewer.",
++
++  "media-viewer.pdf.download": "Download the PDF",
++
++  "media-viewer.loading": "Loading",
+ }
+diff --git a/src/assets/i18n/es.json5 b/src/assets/i18n/es.json5
+index 7f1b2f4d6..d17d896a5 100644
+--- a/src/assets/i18n/es.json5
++++ b/src/assets/i18n/es.json5
+@@ -10975,5 +10975,12 @@
+   // TODO New key - Add a translation
+   "file-download-link.request-copy": "Request a copy of ",
+ 
++  "media-viewer.pdf.files": "Archivos",
++
++  "media-viewer.pdf.browser-not-support": "Tu navegador no es compatible con el visor de PDF.",
++
++  "media-viewer.pdf.download": "Descargar el PDF",
++
++  "media-viewer.loading": "Cargando",
+ 
+ }
+diff --git a/src/assets/i18n/pt-BR.json5 b/src/assets/i18n/pt-BR.json5
+index 7d35b5ccf..d6cabfd91 100644
+--- a/src/assets/i18n/pt-BR.json5
++++ b/src/assets/i18n/pt-BR.json5
+@@ -11144,4 +11144,13 @@
+   "item.preview.organization.address.addressLocality": "Cidade",
+ 
+   "item.preview.organization.alternateName": "Nome alternativo",
++
++  "media-viewer.pdf.files": "Arquivos",
++
++  "media-viewer.pdf.browser-not-support": "Seu navegador não é compatível com o visualizador de PDF.",
++
++  "media-viewer.pdf.download": "Baixar o PDF",
++
++  "media-viewer.loading": "Carregando",
++
+ }
+diff --git a/src/config/default-app-config.ts b/src/config/default-app-config.ts
+index 91adee2e0..403a21643 100644
+--- a/src/config/default-app-config.ts
++++ b/src/config/default-app-config.ts
+@@ -474,6 +474,7 @@ export class DefaultAppConfig implements AppConfig {
+   mediaViewer: MediaViewerConfig = {
+     image: false,
+     video: false,
++    pdf: false,
+   };
+   // Whether the end-user-agreement and privacy policy feature should be enabled or not.
+   // Disabling the end user agreement feature will result in:
+diff --git a/src/config/media-viewer-config.interface.ts b/src/config/media-viewer-config.interface.ts
+index 8a6a16387..469459499 100644
+--- a/src/config/media-viewer-config.interface.ts
++++ b/src/config/media-viewer-config.interface.ts
+@@ -3,4 +3,5 @@ import { Config } from './config.interface';
+ export interface MediaViewerConfig extends Config {
+   image: boolean;
+   video: boolean;
++  pdf: boolean,
+ }
+diff --git a/src/environments/environment.test.ts b/src/environments/environment.test.ts
+index bd456f328..699b8e5db 100644
+--- a/src/environments/environment.test.ts
++++ b/src/environments/environment.test.ts
+@@ -336,6 +336,7 @@ export const environment: BuildConfig = {
+   mediaViewer: {
+     image: true,
+     video: true,
++    pdf: true,
+   },
+   info: {
+     enableEndUserAgreement: true,
+@@ -347,8 +348,8 @@ export const environment: BuildConfig = {
+     mathjax: false,
+   },
+   comcolSelectionSort: {
+-    sortField:'dc.title',
+-    sortDirection:'ASC',
++    sortField: 'dc.title',
++    sortDirection: 'ASC',
+   },
+   qualityAssuranceConfig: {
+     sourceUrlMapForProjectSearch: {
+diff --git a/src/themes/custom/app/item-page/media-viewer/media-viewer.component.ts b/src/themes/custom/app/item-page/media-viewer/media-viewer.component.ts
+index 5d892abee..a98452d9f 100644
+--- a/src/themes/custom/app/item-page/media-viewer/media-viewer.component.ts
++++ b/src/themes/custom/app/item-page/media-viewer/media-viewer.component.ts
+@@ -4,6 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
+ 
+ import { MediaViewerComponent as BaseComponent } from '../../../../../app/item-page/media-viewer/media-viewer.component';
+ import { ThemedMediaViewerImageComponent } from '../../../../../app/item-page/media-viewer/media-viewer-image/themed-media-viewer-image.component';
++import { ThemedMediaViewerPdfComponent } from '../../../../../app/item-page/media-viewer/media-viewer-pdf/themed-media-viewer-pdf.component';
+ import { ThemedMediaViewerVideoComponent } from '../../../../../app/item-page/media-viewer/media-viewer-video/themed-media-viewer-video.component';
+ import { ThemedLoadingComponent } from '../../../../../app/shared/loading/themed-loading.component';
+ import { VarDirective } from '../../../../../app/shared/utils/var.directive';
+@@ -19,6 +20,7 @@ import { ThemedThumbnailComponent } from '../../../../../app/thumbnail/themed-th
+     AsyncPipe,
+     ThemedLoadingComponent,
+     ThemedMediaViewerImageComponent,
++    ThemedMediaViewerPdfComponent,
+     ThemedMediaViewerVideoComponent,
+     ThemedThumbnailComponent,
+     TranslateModule,
